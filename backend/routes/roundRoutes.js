@@ -20,7 +20,7 @@ module.exports = (app, passport) => {
         else presetRounds = doc.length;
       });
       const { questions, time } = req.body;
-      console.log(questions);
+      //console.log(questions);
       await roundmodel
         .create({ roundNo: presetRounds + 1, time: time })
         .then(async (roundins) => {
@@ -154,7 +154,7 @@ module.exports = (app, passport) => {
         .then(async (doc) => {
           doc.time = time;
           await doc.save();
-          console.log(doc);
+          //console.log(doc);
         });
       questions.forEach(async (e) => {
         const {
@@ -166,7 +166,7 @@ module.exports = (app, passport) => {
           options,
           score,
         } = e;
-        // console.log(quesId);
+        // //console.log(quesId);
         await question_set_model
           .findOne({
             where: {
@@ -202,7 +202,7 @@ module.exports = (app, passport) => {
 
   // Checked!
   app.delete("/removeQuestion", authWall, async (req, res) => {
-    console.log(req.user);
+    //console.log(req.user);
     if (req.user.role === "su" || req.user.role === "m") {
       const qid = req.body.quesId;
         const question = await question_set_model.findOne({
@@ -220,7 +220,7 @@ module.exports = (app, passport) => {
   app.delete("/removeRound", authWall, async (req, res) => {
     if (req.user.role == "su" || req.user.role == "m") {
       const getRoundInfo = req.body.roundNo;
-      console.log(getRoundInfo);
+      //console.log(getRoundInfo);
       try {
         const round = await roundmodel.findOne({
           where: {
@@ -230,7 +230,7 @@ module.exports = (app, passport) => {
         await round.destroy();
         return res.status(200).json({ delete: true });
       } catch (err) {
-        console.log(err);
+        //console.log(err);
         return res.status(500).json(err);
       }
     }
@@ -240,7 +240,7 @@ module.exports = (app, passport) => {
   app.delete("/removeUser", authWall, async (req, res) => {
     if (req.user.role == "su") {
       const getRoundInfo = req.body.uuid;
-      // console.log(getRoundInfo)
+      // //console.log(getRoundInfo)
       try {
         const round = await users.findOne({
           where: {
@@ -250,7 +250,7 @@ module.exports = (app, passport) => {
         await round.destroy();
         return res.status(200).json({ delete: true });
       } catch (err) {
-        console.log(err);
+        //console.log(err);
         return res.status(500).json(err);
       }
     }

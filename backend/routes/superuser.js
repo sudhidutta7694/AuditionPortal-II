@@ -25,7 +25,7 @@ module.exports = (app, passport) => {
       const details = await users.findOne({ where: { uuid: uuid } });
       details.role = role;
       details.save();
-      console.log(details);
+      //console.log(details);
       // const w1 = worker_connect.get();
       if ((await eventlogger(req.user, `changed the role for ${details.username} to ${role}`))
       )
@@ -42,7 +42,7 @@ module.exports = (app, passport) => {
       const details = await users.findOne({ where: { uuid: uuid } });
       details.clearance = clearance;
       await details.save();
-      console.log(details);
+      //console.log(details);
       // const worker2 = worker_connect.get();
       if (
         (await eventlogger(
@@ -114,7 +114,7 @@ module.exports = (app, passport) => {
           res.sendStatus(500);
         }
       } catch (e) {
-        console.log(e);
+        //console.log(e);
         res.sendStatus(500);
       }
     } else {
@@ -145,7 +145,7 @@ module.exports = (app, passport) => {
                     } else {
                       kid.time = Number(kid.time) + 600000;
                     }
-                    console.log(kid);
+                    //console.log(kid);
                     kid.save();
                   }
                 });
@@ -250,20 +250,20 @@ module.exports = (app, passport) => {
           csvWriter
             .writeRecords(csvobject)
             .then(() => console.log("The CSV file was written successfully"));
-          /* const rejectedones = rejected.slice(0, -1);
+          const rejectedones = rejected.slice(0, -1);
           let worker;
           if (isMainThread) {
             worker = new Worker(
               path.resolve(__dirname + "../../services/reportSender.js")
             );
             worker.on("message", (data) => {
-              console.log("Done", data);
+              //console.log("Done", data);
             });
             worker.on("error", (data) => {
-              console.log("Error", data);
+              //console.log("Error", data);
             });
             worker.on("exit", (data) => {
-              console.log("Exit", data);
+              //console.log("Exit", data);
             });
           }
           var subject = "Thank you for your participation.";
@@ -304,7 +304,7 @@ module.exports = (app, passport) => {
                 };
                 worker.postMessage(maildata);
               });
-            }) */;
+            })
           if (await eventlogger(req.user, `Result pushed for round ${round}`)) {
             res.status(201).json({ "status": true });
           } else {
@@ -336,17 +336,17 @@ module.exports = (app, passport) => {
           path.resolve(__dirname + "../../services/reportSender.js")
         );
         worker.on("message", (data) => {
-          console.log("Done", data);
+          //console.log("Done", data);
         });
         worker.on("error", (data) => {
-          console.log("Error", data);
+          //console.log("Error", data);
         });
         worker.on("exit", (data) => {
-          console.log("Exit", data);
+          //console.log("Exit", data);
         });
       } */
       let sub = "Reminder GLUG Auditions"
-        let body = `Hello there!
+      let body = `Hello there!
 
         It is to remind you that the GLUG Audition goes live at 7 PM today. If you have not registered yet, then head over to <Link> and do so.
         
@@ -360,17 +360,17 @@ module.exports = (app, passport) => {
         Your's Sincerely,
         GNU/Linux Users' Group, NIT Durgapur.`
       let mails = "";
-        data.forEach((val) => {
-           sendMail(sub,body,val.email)
-        })
-        /* mails = mails.slice(0, -1);
-        let post = mails;
-        const dataval = {
-          subject: sub,
-          text: body,
-          list: post,
-        };
-        worker.postMessage(dataval); */
+      data.forEach((val) => {
+        sendMail(sub, body, val.email)
+      })
+      /* mails = mails.slice(0, -1);
+      let post = mails;
+      const dataval = {
+        subject: sub,
+        text: body,
+        list: post,
+      };
+      worker.postMessage(dataval); */
     } else {
       res.sendStatus(401)
     }
@@ -407,7 +407,7 @@ module.exports = (app, passport) => {
   });
 
   app.get("/getResult", authPass, async (req, res) => {
-    console.log(req.user);
+    //console.log(req.user);
     if (req.user.dataValues.role == "su") {
       let save = JSON.parse(
         fs.readFileSync(
@@ -504,8 +504,8 @@ module.exports = (app, passport) => {
       const data = await users.findAll({
         where: {
           [Op.and]: [
-            { status: "unevaluated" },
-            { round: save.round + 1 },
+            { status: "selected" },
+            { round: save.round },
             { role: "s" }
           ]
         }
@@ -514,6 +514,7 @@ module.exports = (app, passport) => {
       await Promise.all(data.map((d => {
         return arr.push(d.username)
       })))
+      //console.log("\nResults: " + arr)
       res.send(arr)
     } else {
       res.sendStatus(404)
@@ -566,18 +567,17 @@ module.exports = (app, passport) => {
         });
     }
   });
-  app.get("/getcount",authPass, async(req,res) => {
-    if(req.user.role==="su" || req.user.role==="m")
-    {
+  app.get("/getcount", authPass, async (req, res) => {
+    if (req.user.role === "su" || req.user.role === "m") {
       let count = 0;
       const data = await users.findAll({
-        where:{
+        where: {
           role: 's'
         }
       })
       data.forEach(val => {
-        if(val.time!=0){
-          count+=1;
+        if (val.time != 0) {
+          count += 1;
         }
       })
       res.send(data)

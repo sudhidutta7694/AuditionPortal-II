@@ -28,7 +28,7 @@ const eventHandler = async (req, res, next) => {
     };
     clients.push(newClient);
     req.on('close', () => {
-        console.log(`${clientId} Connection closed`);
+        //console.log(`${clientId} Connection closed`);
         clients = clients.filter(c => c.id !== clientId);
     });
 }

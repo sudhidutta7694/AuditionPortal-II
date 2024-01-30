@@ -19,7 +19,7 @@ module.exports = (app, passport) => {
 
     const authPass = passport.authenticate("jwt", { session: false });
     app.post("/protected/getUser", authPass, async (req, res) => {
-        console.log(req.user);
+        //console.log(req.user);
         if (req.user.role === "m" || req.user.role === "su") {
             try {
                 let userArr = [];
@@ -34,7 +34,7 @@ module.exports = (app, passport) => {
                 return res.status(200).json({ data: userArr, user: req.user.username });
             } catch (e) {
                 res.sendStatus(404);
-                console.log(e);
+                //console.log(e);
             }
         } else {
             try {
@@ -43,7 +43,7 @@ module.exports = (app, passport) => {
                 data.save();
                 return res.status(200).json(data);
             } catch (e) {
-                console.log(e);
+                //console.log(e);
                 return res.status(401);
             }
         }
@@ -65,10 +65,11 @@ module.exports = (app, passport) => {
                         } 
                     }))
                 })
+                // //console.log("Results: " + userArr);
                 return res.status(200).json({ data: userArr, user: req.user.username });
             } catch (e) {
                 res.sendStatus(404);
-                console.log(e);
+                //console.log(e);
             }
         } else {
             try {
@@ -77,7 +78,7 @@ module.exports = (app, passport) => {
                 data.save();
                 return res.status(200).json(data);
             } catch (e) {
-                console.log(e);
+                //console.log(e);
                 return res.status(401);
             }
         }
@@ -135,7 +136,7 @@ module.exports = (app, passport) => {
                     arr.push(obj)
                     entry.feedback = arr
                 }
-                // console.log(entry.feedback);
+                // //console.log(entry.feedback);
                 entry.save().then(async () => {
                     // const w2 = worker_connect.get();
                     if (await eventlogger(req.user, `Added feedback for ${req.body.username}`))

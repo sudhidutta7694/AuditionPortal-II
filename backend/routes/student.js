@@ -26,7 +26,7 @@ module.exports = (app, passport) => {
     app.put("/student/answerround",authPass, async(req,res) => {
         if(req.user.time > new Date().getTime()){
             const answers = req.body.answers;
-                console.log(answers)
+                //console.log(answers)
                 const userId = req.user.uuid;
                 answers.forEach(async ans => {
                     await question_answered_model.findOne({
@@ -61,10 +61,10 @@ module.exports = (app, passport) => {
     // each answer is processed at one time.
     app.put("/student/answer", authPass, async (req, res) => {
         // The Route is for each answer a student shall give....
-        // console.log(req.user)
+        // //console.log(req.user)
         var { qid, qtype, answer, roundNo, ansLink } = req.body;
         
-            console.log(req.body);
+            //console.log(req.body);
             let currenttime = new Date().getTime();
             let save = JSON.parse(
                 fs.readFileSync(
@@ -77,10 +77,10 @@ module.exports = (app, passport) => {
                     uuid: req.user.uuid
                 }
             }).then(async (student) => {
-                // console.log(qid);
+                // //console.log(qid);
                 const data1 = await question_set_model.findOne({ where: { quesId : qid }})
                 const roundNo = data1.roundmodelRoundNo
-                // console.log(data1)
+                // //console.log(data1)
                 if (save.round === roundNo && save.status === "ong" &&
                     student.time >= currenttime && student.round === roundNo) {
                     // Checks whether the student has answered any rounds or not.....
@@ -150,12 +150,12 @@ module.exports = (app, passport) => {
                 uuid: req.user.uuid
             }
         }).then((doc) => {
-            console.log(doc)
+            //console.log(doc)
             if ((req.user.role === 's' && doc.round == save.round && save.status === "ong") || (req.user.role === 'su' || req.user.role === 'm')) {
                 if (doc.time === '0') {
                     doc.time = new Date().getTime() + save.time * 60000 + 2000;
                     doc.save();
-                    console.log(doc)
+                    //console.log(doc)
                     roundmodel.findAll({
                         include:[{
                             model:question_set_model,
@@ -170,7 +170,7 @@ module.exports = (app, passport) => {
                 } else {
                     /* doc.time = new Date().getTime() + save.time * 60000 + 2000;
                     doc.save();
-                    console.log(doc) */
+                    //console.log(doc) */
                     roundmodel.findAll({
                         include:[{
                             model:question_set_model,
@@ -213,7 +213,7 @@ module.exports = (app, passport) => {
                 })
             }))
             if (ansArr.length != 0) { 
-                console.log(ansArr.length)
+                //console.log(ansArr.length)
                 res.json({ answers: ansArr }) 
             }
             else { res.sendStatus(404) }

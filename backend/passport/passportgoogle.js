@@ -1,13 +1,14 @@
 const GoogleStrategy = require('passport-google-oauth20')
 let { DataTypes } = require('sequelize');
 const { sequelize } = require('../models');
-// const User = require('../models/users')(sequelize, DataTypes)
+const User = require('../models/users')(sequelize, DataTypes)
 const  { models : { users }} = sequelize;
 require('dotenv').config();
+//console.log(process.env.GOOGLE_CALLBACK)
 module.exports = function (passport) {
 
     passport.serializeUser((user, done) => {
-        //done(null, user.id);
+        done(null, user.id);
         users.getUserById(user).then((data) => {
             done(null, data);
         })
@@ -25,10 +26,10 @@ module.exports = function (passport) {
         clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
         clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET
     }, async (accessToken, refreshToken, profile, done) => {
-        // console.log(profile);
+        //console.log(profile);
         await users.getUserByEmail(profile.emails[0].value).then(async (currentUser) => {
             if (currentUser) {
-                console.log('Existing User: ' + currentUser)
+                //console.log('Existing User: ' + currentUser)
                 done(null, currentUser);
             }
             else {

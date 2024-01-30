@@ -1,17 +1,16 @@
-/*
-  Fucking Tested!!
-*/
-
 const { sequelize } = require("../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const {
   models: { users },
 } = sequelize;
-module.exports = (app, passport) => {
-  require("../passport/passportjwt")(passport);
-  require("../passport/passportgoogle")(passport);
-  require("../passport/passportgithub")(passport);
+const passport = require('passport');
+
+module.exports = (app) => {
+  // Include passport initialization and session setup
+  app.use(passport.initialize());
+  app.use(passport.session());
+
   app.post("/auth/signup", async (req, res) => {
     const { username, email, password, role, phone } = req.body;
     if (role === "su") {
@@ -38,12 +37,12 @@ module.exports = (app, passport) => {
 
   app.post("/auth/login", async (req, res) => {
     const { email, password } = req.body;
-    // console.log(`Yay! we have email & password ${email} & ${password}`);
+    //console.log(`Yay! we have email & password ${email} & ${password}`);
     users.getUserByEmail(email).then((data) => {
       try {
         users.comparePassword(password, data.password, async (err, ans) => {
           if (err) {
-            console.log(err);
+            //console.log(err);
             return res.status(500).json(err);
           }
           if (ans) {
@@ -56,7 +55,7 @@ module.exports = (app, passport) => {
               roll: data.roll,
               clearance: data.clearance,
             };
-            console.log(JSON.stringify(payload));
+            //console.log(JSON.stringify(payload));
             let token = jwt.sign(payload, process.env.SECRET, {
               expiresIn: 600000,
             });
@@ -83,7 +82,7 @@ module.exports = (app, passport) => {
           }
         });
       } catch (err) {
-        console.log(err);
+        //console.log(err);
         return res.status(500).json(err);
       }
     });
@@ -112,34 +111,43 @@ module.exports = (app, passport) => {
     "/auth/google/callback",
     passport.authenticate("google"),
     async (req, res) => {
+      try {
+        //console.log(req.user)
+        const payload = {
+          uuid: req.user.uuid,
+          username: req.user.username,
+          email: req.user.email,
+          role: req.user.role,
+          phone: req.user.phone,
+          roll: req.user.roll,
+          clearance: req.user.clearance,
+        };
+        var token = jwt.sign(payload, process.env.SECRET, { expiresIn: 600000 });
+        res.cookie("jwt", token);
+        //console.log(req.user.mode);
+        if (req.user.mode === "google") {
+          //console.log(req.user.mode);
+          res.redirect(`${process.env.FRONTEND}?token=${token}`);
+        } else res.redirect(`${process.env.FRONTEND}?error=email`);
+      }
+      catch (err) {
+        //console.log(err);
+      }
 
-      const payload = {
-        uuid: req.user.uuid,
-        username: req.user.username,
-        email: req.user.email,
-        role: req.user.role,
-        phone: req.user.phone,
-        roll: req.user.roll,
-        clearance: req.user.clearance,
-      };
-      var token = jwt.sign(payload, process.env.SECRET, { expiresIn: 600000 });
-      // res.cookie("jwt", token);
-      if (req.user.mode === "google")
-        res.redirect(`${process.env.FRONTEND}?token=${token}`);
-      else res.redirect(`${process.env.FRONTEND}?error=email`);
       // res.status(201).json({
-      //     success: true,
-      //     token: "Bearer " + token,
-      //     user: "exists already"
+      //   success: true,
+      //   token: "Bearer " + token,
+      //   user: "exists already"
       // });
     }
   );
-  app.get("/auth/github", passport.authenticate("github"));
 
+  app.get("/auth/github", passport.authenticate("github"));
   app.get(
     "/auth/github/callback",
     passport.authenticate("github"),
     async (req, res) => {
+      //console.log(req.user);
       const payload = {
         uuid: req.user.uuid,
         username: req.user.username,
@@ -150,15 +158,16 @@ module.exports = (app, passport) => {
         clearance: req.user.clearance,
       };
       var token = jwt.sign(payload, process.env.SECRET, { expiresIn: 600000 });
-      // res.cookie("jwt", token);
+      res.cookie("jwt", token);
       if (req.user.mode === "github")
         res.redirect(`${process.env.FRONTEND}?token=${token}`);
       else res.redirect(`${process.env.FRONTEND}?error=email`);
-    //   res.status(201).json({
-    //     success: true,
-    //     token: "Bearer " + token,
-    //     user: "exists already",
-    //   });
+      // res.status(201).json({
+      //   success: true,
+      //   token: "Bearer " + token,
+      //   user: "exists already",
+      // });
     }
   );
+
 };

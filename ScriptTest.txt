@@ -15,7 +15,7 @@ Testing script
    "password":"rohan"
 }
 
-//Sample Round Addiiton.
+//Sample Round Audition.
 {
    "time":60,
    "questions":[

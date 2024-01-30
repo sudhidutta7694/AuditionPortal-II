@@ -8,7 +8,7 @@ if(!isMainThread){
 let sendMail = async (subject, text, to) => {
     {
         try {
-            console.log("to --- " + to);
+            //console.log("to --- " + to);
             const transporter = nodemailer.createTransport({
                 host: "smtp.mailgun.org",
                 secure: true,
@@ -21,9 +21,9 @@ let sendMail = async (subject, text, to) => {
             });
             transporter.verify( function (err, success){
                 if(err){
-                    console.log(err);
+                    //console.log(err);
                 } else {
-                    console.log("Server is ready to take our messages");
+                    //console.log("Server is ready to take our messages");
                 }
             });
 
@@ -33,17 +33,17 @@ let sendMail = async (subject, text, to) => {
                 subject:subject,
                 html: text,
             };
-            // console.log(message);
+            // //console.log(message);
             transporter.sendMail(message, (err,data) => {
                 if(err){
-                    console.log(err)
+                    //console.log(err)
                 } else {
-                    console.log(`Message sent success!!!`)
+                    //console.log(`Message sent success!!!`)
                 }
             });
 
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     }
 }
