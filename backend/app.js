@@ -51,10 +51,10 @@ require('./routes/student')(app, passport);
 
 try {
     sequelize.authenticate();
-    //console.log('Database Connected');
+    console.log('Database Connected');
     app.listen(PORT, async () => {
-        //console.log(`Server up on http://localhost:${PORT}`);
+        console.log(`Server up on http://localhost:${PORT}`);
     });
 } catch (err) {
-    //console.log(err);
+    console.log(err);
 }

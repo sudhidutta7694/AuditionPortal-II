@@ -27,7 +27,7 @@ module.exports = function (passport) {
         scope: ['user:email'],
       },
       (accessToken, refreshToken, profile, done) => {
-        //console.log("Hit GitHub Strategy")
+        console.log("Hit GitHub Strategy")
         var options = {
           headers: {
             'User-Agent': 'JavaScript.en',
